@@ -960,11 +960,16 @@ class AsyncSniffer(object):
                         p = read_func(s)
                     except EOFError:
                         # End of stream
+                        # don't close it here. Wait fore some new data
+                        # close it with ctrl-c
                         try:
-                            s.close()
-                        except Exception:
-                            pass
-                        dead_sockets.append(s)
+                            time.sleep(0.2)
+                        except KeyboardInterrupt:
+                            try:
+                                s.close()
+                            except Exception:
+                                pass
+                            dead_sockets.append(s)
                         continue
                     except Exception as ex:
                         msg = " It was closed."
