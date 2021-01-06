@@ -15,6 +15,50 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](LICENSE)
 [![Join the chat at https://gitter.im/secdev/scapy](https://badges.gitter.im/secdev/scapy.svg)](https://gitter.im/secdev/scapy) <!-- ignore_ppi -->
 
+
+# changes by kmille
+- add feature: read from a file and keep it open if we are at EOF (tail -f -b +0 | tcpdump -r -)
+- based on the 2.4.4 branch
+
+### install
+```bash
+git clone git@github.com:kmille/scapy.git
+git checkout tail-f
+python3 -m venv venv
+source venv/bin/activate
+python setup.py install
+tcpdump -U  -ni any port 443 -w /tmp/dump.pcap  # in a new window
+curl -v https://heise.de  # in a new window
+python tail-f.py
+(venv) root@buster:~/tmp/scapy# python tail-f.py
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https S
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 SA / Padding
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https A
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https PA / Raw
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 A / Padding
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 A / Raw
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https A
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 PA / Raw
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https A
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https PA / Raw
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 A / Padding
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 PA / Raw
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https PA / Raw
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 A / Padding
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 PA / Raw
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https PA / Raw
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 A / Padding
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https FA
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 A / Padding
+CookedLinux / IP / TCP 193.99.144.80:https > 10.0.2.15:60686 FA / Padding
+CookedLinux / IP / TCP 10.0.2.15:60686 > 193.99.144.80:https A
+... <- keeps open and waits for the next curl
+```
+
+On Arch I had this bug: https://bugs.python.org/issue42580
+
+</kmille>
+
 Scapy is a powerful Python-based interactive packet manipulation program and
 library.
 
